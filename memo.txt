@@ -1,0 +1,59 @@
+﻿scp transmission
+$scp id@address:srcdir/file destdir
+$scp  srcdir/file id@address:destdir
+
+clone specific branch
+$git clone -b <branch> <remote_repo> --depth 1
+
+-------------------------------------------------------
+
+rpi firmware update
+$rpi-update
+$apt-get update
+$apt-get upgrade
+$reboot
+
+rpi configs
+$modprobe configs
+/proc/config.gz
+$ls /lib/modules
+
+-------------------------------------------------
+
+getting crosscompiler
+$apt-get install gcc-arm-linux-gnueabi make ncurses-dev
+
+getting kernel source
+$...(appropriate version of kernelsource)
+
+copying rpiconfig to kernelconfig
+$cd kernelsource
+$cp rpiconfigdir/config .config 
+
+check version in 'Makefile'
+
+check '.config'
+$cat .config | grep CONFIG_LOCALVERSION_AUTO=n
+
+building kernel to make modules 
+$make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- oldconfig 
+$make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- menuconfig
+$make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- modules_prepare
+
+download appropriate version of 'Module.symvers'
+$wget https://github.com/raspberrypi/firmware/raw/master/extra/Module.symvers
+
+---------------------------------------------------------
+
+insert module
+$insmod
+
+detach module
+$rmmod
+
+check version of module
+$modinfo
+
+show printk msg
+$dmesg
+
