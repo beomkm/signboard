@@ -14,6 +14,7 @@ MODULE_DESCRIPTION("st7565 ascii module");
 
 static int major;
 
+//GPIO address of BCM2385
 static unsigned long ADDR = 0x20200000;
 static unsigned long RANGE = 0x40;
 static void *addr;
@@ -124,6 +125,10 @@ static char fonts[96][16] = {
 };
 
 
+//bcm2385
+//base address
+//write 0 to gpio : addr+0x28
+//write 1 to gpio : addr+0x1c
 static int send_data(char value, char type)
 {
 	int i;
@@ -149,6 +154,7 @@ static int send_data(char value, char type)
 	return 0;
 }
 
+//1 page = 8px x 8px
 static int set_page(int page, int col)
 {
 	int p = page | 0xb0;
@@ -213,29 +219,35 @@ static ssize_t dev_write(struct file *fp, const char *buffer, size_t len, loff_t
 	writel(1<<cs, (addr+0x1c));
 	writel(1<<rst, (addr+0x28));
 	writel(1<<rst, (addr+0x1c));
-	send_data(0xe2, 0);
-	send_data(0xa3, 0);
-	send_data(0xa0, 0);
-	send_data(0xc8, 0);
-	send_data(0xa4, 0);
-	send_data(0xa6, 0);
 
-	send_data(0x2f, 0);
-	send_data(0x60, 0);
-	send_data(0x22, 0);
-	send_data(0x81, 0);
-	send_data(0x28, 0);
-	send_data(0xaf, 0);
+	//st7565 instructions
+	send_data(0xe2, 0); //Reset
+
+	send_data(0xa3, 0); //LCD bias voltage
+	send_data(0xa0, 0); //Display flapped on/off
+	send_data(0xc8, 0); //Output scan reverse on/off
+	send_data(0xa4, 0); //Make all pixels on on/off
+	send_data(0xa6, 0); //Display reverse on/off
+
+	send_data(0x2f, 0); //Power control
+	send_data(0x60, 0); //Set starting line num
+	send_data(0x22, 0); //Internal resistor ratio
+	send_data(0x81, 0); //Brighteness
+	send_data(0x28, 0); //Power control
+
+	send_data(0xaf, 0); //Display on
 
 	//lcd clear
 	clear_lcd();
 
 	//write string
 	for(i=0; i<len-1; i++) {
+		//upper side of a letter
 		set_page(3, i*8+1);
 		for(j=0; j<8; j++) {
 			send_data(fonts[(int)buffer[i]-32][j], 1);
 		}
+		//under side of a letter
 		set_page(4, i*8+1);
 		for(j=8; j<16; j++) {
 			send_data(fonts[(int)buffer[i]-32][j], 1);
