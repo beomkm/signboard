@@ -6,3 +6,5 @@
 *.symvers
 *.cmd
 *.mod
+*.swp
+*/bin/*
