@@ -21,7 +21,7 @@ int main()
 	pthread_t thread;
 	int server, client; //socket
 	struct sockaddr_in s_adr, c_adr;
-	socklen_t size; //client address size
+	int size; //client address size
 
 	pthread_mutex_init(&mutex, NULL);
 
@@ -44,7 +44,7 @@ int main()
 	printf("wating to connect.. port : %d\n", PORT);
 
 	while(1) {
-		size = (socklen_t)sizeof(c_adr);
+		size = sizeof(c_adr);
 		client = accept(server, (struct sockaddr*)&c_adr, &size);
 
 		pthread_mutex_lock(&mutex);
@@ -66,7 +66,15 @@ int main()
 void *handler(void *arg)
 {
 	int sock = *((int*)arg);
+	char msg;
 	int i;
+
+	while(read(sock, &msg, sizeof(char))) {
+		if(msg == 0x01) {
+			write(sock, &msg, 1);
+		}
+	}
+
 
 	//disconnecting
 	pthread_mutex_lock(&mutex);
