@@ -26,7 +26,7 @@ int main()
 	pthread_mutex_init(&mutex, NULL);
 
 	server = socket(PF_INET, SOCK_STREAM, 0);
-	
+
 	memset(&s_adr, 0, sizeof(s_adr));
 	s_adr.sin_family = AF_INET;
 	s_adr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -90,4 +90,4 @@ void *handler(void *arg)
 	pthread_mutex_unlock(&mutex);
 	close(sock);
 	return NULL;
-}	
+}

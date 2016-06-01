@@ -19,14 +19,14 @@ int main(void)
 {
 	FILE *fp;
 	char msg[BUF_SIZE];
-	int len;  
+	int len;
 	void *vp; //for thread join
 
 	printf("input text : ");
 	fgets(msg, BUF_SIZE, stdin);
 	len = strlen(msg);
 
-	/*
+
 
 	pthread_t t_read;
 	pthread_t t_ack;
@@ -46,19 +46,7 @@ int main(void)
 		fprintf(stderr, "Failed to connect\n");
 		exit(1);
 	}
-	*/
 
-	fp = fopen("/dev/lcd_ascii", "wt");
-	if(fp == NULL) {
-		fprintf(stderr, "Failed to open device driver!\n");
-		exit(1);
-	}
-
-	fwrite(msg, 1, len+1, fp); //including '\0'
-
-	fclose(fp);
-
-	/*
 	if(pthread_create(&t_read, NULL, h_read, (void*)&sock) != 0) {
 		fprintf(stderr, "Faild to create thread\n");
 		exit(1);
@@ -70,7 +58,7 @@ int main(void)
 		exit(1);
 	}
 	pthread_detach(t_ack);
-	
+
 	if(pthread_create(&t_display, NULL, h_display, NULL) != 0) {
 		fprintf(stderr, "Faild to create thread\n");
 		exit(1);
@@ -82,7 +70,7 @@ int main(void)
 		exit(1);
 	}
 	pthread_join(t_input, &vp);
-	*/
+
 
 	exit(0);
 }
@@ -99,9 +87,9 @@ void* h_read(void *arg)
 			printf("ACK\n");
 		}
 		else if(msg == 0x02) {
-			read(sock, &count, 1);	
+			read(sock, &count, 1);
 			for(i=0; i<count; i++) {
-				read(sock, &size, 1);	
+				read(sock, &size, 1);
 			}
 		}
 	}
