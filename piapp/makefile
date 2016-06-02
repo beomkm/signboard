@@ -1,6 +1,8 @@
-all: lcd
+all: bin/lcd bin/lcd-arm
 
-CC = arm-linux-gnueabi-gcc
+CCARM = arm-linux-gnueabi-gcc
+CC = gcc
+
 LIBS = -lpthread
 
 #debug
@@ -9,9 +11,11 @@ LIBS = -lpthread
 #release
 CFLAGS = -O2 -w
 
-lcd: lcd.c
+bin/lcd-arm: lcd-arm.c
+	$(CCARM) $(CFLAGS) lcd-arm.c -o bin/lcd-arm $(LIBS)
+
+bin/lcd: lcd.c
 	$(CC) $(CFLAGS) lcd.c -o bin/lcd $(LIBS)
 
 clean:
-	rm lcd
-
+	rm lcd lcd-arm
