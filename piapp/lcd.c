@@ -15,7 +15,7 @@ void *h_ack(void *arg);
 void *h_display(void *arg);
 void *h_input(void *arg);
 
-char data[4][128];
+char data[10][128];
 int data_count = 0;
 
 int main(void)
@@ -83,6 +83,7 @@ void* h_read(void *arg)
 			printf("ACK\n");
 		}
 		else if(msg == 0x02) {
+			data_count = 0;
 			while(1) {
 				read(sock, &size, 1);
 				if(size == 0) break;
