@@ -1,4 +1,4 @@
-all: bin/lcd bin/lcd-arm
+all: bin/lcd bin/lcd-arm bin/updater
 
 CCARM = arm-linux-gnueabi-gcc
 CC = gcc
@@ -17,5 +17,8 @@ bin/lcd-arm: lcd-arm.c
 bin/lcd: lcd.c
 	$(CC) $(CFLAGS) lcd.c -o bin/lcd $(LIBS)
 
+bin/updater: updater.c
+	$(CC) $(CFLAGS) updater.c -o bin/updater $(LIBS)
+
 clean:
-	rm lcd lcd-arm
+	rm bin/lcd bin/lcd-arm bin/updater
