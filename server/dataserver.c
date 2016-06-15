@@ -14,7 +14,7 @@
 #define DB_HOST "127.0.0.1"
 #define DB_USER "root"
 //#define DB_PASS "pass"
-
+#define DB_PASS "-"
 #define DB_NAME "mysql"
 
 MYSQL mysql;
@@ -45,6 +45,8 @@ int main(void)
 		fprintf(stderr, "Faild to create thread\n");
 		exit(1);
 	}
+
+	printf("Type 'p' to send data to clients\n\n");
 
 	count = 0;
 	//init sql
@@ -90,8 +92,8 @@ int main(void)
 		size = sizeof(c_adr);
 		client = accept(server, (struct sockaddr*)&c_adr, &size);
 
-		pthread_mutex_lock(&mutex);
 		printf("client fd : %d\n", client);
+		pthread_mutex_lock(&mutex);
 		list[count] = client;
 		++count;
 		pthread_mutex_unlock(&mutex);
@@ -159,7 +161,7 @@ void *h_read(void *arg)
 	}
 	--count;
 	pthread_mutex_unlock(&mutex);
-	printf("disconnected\n");
+	printf("fd %d disconnected\n", sock);
 	close(sock);
 	return NULL;
 }

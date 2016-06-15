@@ -9,7 +9,7 @@
 #define BUF_SIZE 17
 #define MSG_SIZE 68
 #define DISP_SIZE 100
-#define IP "128.199.120.239"
+#define IP "0.0.0.0"
 #define PORT 12321
 
 void* h_read(void *arg);
@@ -186,6 +186,7 @@ void display(char *msg)
 
 	for(i=0; i<len+(BUF_SIZE-2); i++) {
 		//printf("%d\n",i);
+		//term : 0.66s
 		fwrite(disp+i, 1, BUF_SIZE+1, fp); //including '\0'
 		fflush(fp);
 		usleep(500*1000);

@@ -18,7 +18,7 @@ bin/lcd: lcd.c
 	$(CC) $(CFLAGS) lcd.c -o bin/lcd $(LIBS)
 
 bin/updater: updater.c
-	$(CC) $(CFLAGS) updater.c -o bin/updater $(LIBS)
+	$(CCARM) $(CFLAGS) updater.c -o bin/updater $(LIBS)
 
 clean:
 	rm bin/lcd bin/lcd-arm bin/updater

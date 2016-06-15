@@ -242,7 +242,7 @@ static ssize_t dev_write(struct file *fp, const char *buffer, size_t len, loff_t
 
 	//write string
 	for(i=0; i<len-1; i++) {
-		
+
 		if((int)buffer[i]-32 < 0 || (int)buffer[i]-32 > 95)
 			break;
 

@@ -6,8 +6,8 @@
 #include <sys/socket.h>
 #include <pthread.h>
 
-#define BUF_SIZE 128
-#define IP "127.0.0.1"
+#define F_BUF 100 //file read buffer
+#define IP "0.0.0.0"
 #define PORT 23432
 
 void *h_read(void *arg);
@@ -65,14 +65,54 @@ void* h_read(void *arg)
 	char size; //size of each data
 	int i;
 	char msg;
+	char buf[F_BUF];
+	int file_size;
+	int read_size;
+	int nread;
+	int success = 0;
+	FILE *fp;
 
 	while(read(sock, &msg, 1)) {
 		if(msg == 0x01) {
-			printf("ACK\n");
+			//printf("ACK\n");
 		}
 		else if(msg == 0x02) {
-			data_count = 0;
-			printf("recv!\n");
+			read(sock, &file_size, sizeof(int));
+			printf("size : %d\n", file_size);
+			if(file_size > 0) {
+				fp = fopen("up", "w");
+				if(fp != NULL) {
+					while(1) {
+						nread = read(sock, buf, F_BUF);
+						read_size += nread;
+						fwrite(buf, 1, nread, fp);
+						if(read_size == file_size) break;
+					}
+					fclose(fp);
+					success = 1;
+					system("sudo pkill -9 lcd-arm");
+					system("rm lcd-arm");
+					system("sudo chmod 755 up");
+					system("mv up lcd-arm");
+					system("sudo ./lcd-arm &");
+					printf("Update complete\n");
+				}
+				else {
+					printf("Failed to write file\n");
+				}
+			}
+			else {
+				printf("Failed to receive file\n");
+			}
+
+			if(success == 1) {
+				msg = 0x02;
+				write(sock, &msg, 1);
+			}
+			else {
+				msg = 0x03;
+				write(sock, &msg, 1);
+			}
 		}
 	}
 	printf("disconnected\n");
@@ -84,8 +124,7 @@ void* h_ack(void *arg)
 {
 	int sock = *((int*)arg);
 	char msg = 0x01;
-	while(1) {
-		write(sock, &msg, 1);
+	while(write(sock, &msg, 1) != -1) {
 		sleep(2);
 	}
 	pthread_exit(NULL);
